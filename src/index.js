@@ -1,19 +1,14 @@
 export default {
   async fetch(request, env) {
-    if (env.ASSETS) {
-      return env.ASSETS.fetch(request);
+    const url = new URL(request.url);
+
+    if (url.pathname === "/api/health") {
+      return Response.json({
+        status: "online",
+        agent: "Qikink POD Agent"
+      });
     }
 
-    return new Response(
-      JSON.stringify({
-        status: "online",
-        message: "Qikink POD Agent is running"
-      }),
-      {
-        headers: {
-          "content-type": "application/json"
-        }
-      }
-    );
+    return env.ASSETS.fetch(request);
   }
 };
