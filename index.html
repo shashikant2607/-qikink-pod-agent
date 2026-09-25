@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Qikink POD AI Agent</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f5f6fa;color:#111827}.wrap{max-width:1050px;margin:auto;padding:22px}
+.hero{background:#111827;color:white;border-radius:20px;padding:28px}.hero h1{margin:0 0 8px}.muted{color:#6b7280}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.card{background:white;border:1px solid #e5e7eb;border-radius:18px;padding:20px}
+textarea{width:100%;min-height:120px;box-sizing:border-box;padding:12px;border:1px solid #d1d5db;border-radius:12px}
+button{width:100%;padding:13px;margin-top:10px;border:0;border-radius:12px;background:#111827;color:white;font-weight:bold}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.stat{background:white;padding:16px;border-radius:14px;border:1px solid #e5e7eb}
+.chat{margin-top:12px;background:#f9fafb;padding:14px;border-radius:12px;min-height:70px;white-space:pre-wrap}
+@media(max-width:700px){.grid,.stats{grid-template-columns:1fr}}
+</style></head>
+<body><div class="wrap">
+<div class="hero"><h1>Qikink POD AI Agent</h1><div class="muted">Print-on-demand dashboard starter</div></div>
+<div class="stats"><div class="stat"><b>Products</b><br>Ready</div><div class="stat"><b>Orders</b><br>Automation ready</div><div class="stat"><b>Agent</b><br><span id="status">Checking...</span></div></div>
+<div class="grid">
+<div class="card"><h2>AI Agent</h2><textarea id="msg" placeholder="Example: Suggest 5 POD niches"></textarea><button onclick="ask()">Ask Agent</button><div id="reply" class="chat">Response will appear here.</div></div>
+<div class="card"><h2>Qikink Setup</h2><p class="muted">Never put real API keys in GitHub.</p><p><b>QIKINK_CLIENT_ID</b></p><p><b>QIKINK_CLIENT_SECRET</b></p><p><b>AI_API_KEY</b></p><button onclick="check()">Check connection</button><div id="checkResult" class="muted"></div></div>
+</div></div>
+<script>
+async function ask(){let m=document.getElementById("msg").value;let r=await fetch("/api/chat",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({message:m})});let d=await r.json();document.getElementById("reply").textContent=d.reply||d.error||"Error"}
+async function check(){let r=await fetch("/api/health");let d=await r.json();document.getElementById("checkResult").textContent=d.qikinkConfigured?"Qikink credentials configured.":"Qikink credentials not configured yet."}
+fetch("/api/health").then(r=>r.json()).then(d=>document.getElementById("status").textContent=d.ok?"Online":"Offline")
+</script></body></html>
