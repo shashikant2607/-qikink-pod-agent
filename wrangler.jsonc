@@ -1,8 +1,9 @@
 {
-  // ...
-  "vars": {
-    "OPENAI_API_KEY": "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",
-    "QIKINK_CLIENT_SECRET": "*******************"
-  },
-  // ...
+  "name": "qikink-pod-agent",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-25",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  }
 }
