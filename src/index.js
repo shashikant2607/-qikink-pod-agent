@@ -11,8 +11,18 @@ export default {
     }
 
     // Qikink API connection test
-    if (url.pathname === "/api/qikink-test") {
+    if (url.pathname === "/api/qikinik-test") {
       try {
+        if (!env.QIKINK_CLIENT_ID || !env.QIKINK_CLIENT_SECRET) {
+          return Response.json(
+            {
+              success: false,
+              error: "Qikink credentials are not configured"
+            },
+            { status: 500 }
+          );
+        }
+
         const response = await fetch(
           "https://sandbox.qikink.com/api/token",
           {
@@ -27,7 +37,23 @@ export default {
           }
         );
 
-        const data = await response.json();
+        const text = await response.text();
+
+        let data;
+
+        try {
+          data = JSON.parse(text);
+        } catch {
+          return Response.json(
+            {
+              success: false,
+              qikink_status: response.status,
+              error: "Qikink returned a non-JSON response",
+              response: text.slice(0, 500)
+            },
+            { status: 502 }
+          );
+        }
 
         if (!response.ok || !data.AccessToken) {
           return Response.json(
@@ -43,9 +69,9 @@ export default {
         return Response.json({
           success: true,
           message: "Qikink API connected successfully",
-          clientId: data.ClientId,
           expires_in: data.expires_in
         });
+
       } catch (error) {
         return Response.json(
           {
@@ -57,6 +83,11 @@ export default {
       }
     }
 
-    return env.ASSETS.fetch(request);
+    return Response.json(
+      {
+        error: "Not Found"
+      },
+      { status: 404 }
+    );
   }
 };
