@@ -10,84 +10,38 @@ export default {
       });
     }
 
-    // Qikink API connection test
-    if (url.pathname === "/api/qikinik-test") {
+    // Qikink API test
+    if (url.pathname === "/api/qikink-test") {
       try {
-        if (!env.QIKINK_CLIENT_ID || !env.QIKINK_CLIENT_SECRET) {
-          return Response.json(
-            {
-              success: false,
-              error: "Qikink credentials are not configured"
-            },
-            { status: 500 }
-          );
-        }
-
         const response = await fetch(
-          "https://sandbox.qikink.com/api/token",
+          "https://sandbox-api.qikink.com/api/v1/oauth/token",
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
+              "Content-Type": "application/json"
             },
-            body: new URLSearchParams({
-              ClientId: env.QIKINK_CLIENT_ID,
+            body: JSON.stringify({
+              client_id: env.QIKINK_CLIENT_ID,
               client_secret: env.QIKINK_CLIENT_SECRET
             })
           }
         );
 
-        const text = await response.text();
-
-        let data;
-
-        try {
-          data = JSON.parse(text);
-        } catch {
-          return Response.json(
-            {
-              success: false,
-              qikink_status: response.status,
-              error: "Qikink returned a non-JSON response",
-              response: text.slice(0, 500)
-            },
-            { status: 502 }
-          );
-        }
-
-        if (!response.ok || !data.AccessToken) {
-          return Response.json(
-            {
-              success: false,
-              qikink_status: response.status,
-              error: data
-            },
-            { status: 502 }
-          );
-        }
+        const data = await response.json();
 
         return Response.json({
-          success: true,
-          message: "Qikink API connected successfully",
-          expires_in: data.expires_in
+          success: response.ok,
+          qikink_status: response.status,
+          data: data
         });
-
       } catch (error) {
-        return Response.json(
-          {
-            success: false,
-            error: error.message
-          },
-          { status: 500 }
-        );
+        return Response.json({
+          success: false,
+          error: error.message
+        }, { status: 500 });
       }
     }
 
-    return Response.json(
-      {
-        error: "Not Found"
-      },
-      { status: 404 }
-    );
+    return env.ASSETS.fetch(request);
   }
 };
