@@ -1,5 +1,5 @@
 {
   "name": "qikink-pod-agent",
   "main": "src/index.js",
-  "compatibility_date": "2026-09-26"
+  "compatibility_date": "2026-09-25"
 }
