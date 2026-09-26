@@ -1,7 +1,3 @@
-
-✅ सही `wrangler.jsonc`:
-
-```json
 {
   "name": "qikink-pod-agent",
   "main": "src/index.js",
